@@ -1,0 +1,110 @@
+# Site settings
+title: Francis Soung
+SEOTitle: Francis Soung
+header-img: img/home-bg.jpg
+email: francissoung@126.com
+description: "这是一个程序员的日记薄，记录工作与生活的点点滴滴。包括WEB程序开发、Linux服务器管理、LAMP/LNMP环境配置优化、PHP网络技术、MySQL优化等技术分享以及个人生活旅行中的所见所闻所解。"
+keyword: "WEB程序开发,Linux服务器管理,LAMP/LNMP环境配置优化,网络架构,MySQL优化,生活旅行,Francis,francissoung,php程序猿的笔记,程序员的日记薄"
+url: "http://www.francissoung.com"              # your host, for absolute URL
+baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
+
+
+
+# SNS settings
+RSS: false
+weibo_username:     523072343
+zhihu_username:     Franciskeke
+segmentfault_username: francissoung
+github_username:    FrancisSoung
+twitter_username:  Francis_Soung
+facebook_username:  francis.soung
+
+
+# qiniu settings
+qiniu_url: "http://7xl0td.com1.z0.glb.clouddn.com"
+
+
+
+
+# Build settings
+# from 2016, 'pygments' is unsupported on GitHub Pages. Use 'rouge' for highlighting instead.
+highlighter: rouge
+permalink: pretty
+paginate: 10
+exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
+anchorjs: true                          # if you want to customize anchor. check out line:181 of `post.html`
+
+
+
+# Gems
+# from PR#40, to support local preview for Jekyll 3.0
+gems: [jekyll-paginate]
+
+
+
+# Markdown settings
+# replace redcarpet to kramdown,
+# although redcarpet can auto highlight code, the lack of header-id make the catalog impossible, so I switch to kramdown
+# document: http://jekyllrb.com/docs/configuration/#kramdown
+markdown: kramdown
+kramdown:
+  input: GFM                            # use Github Flavored Markdown !important
+
+
+
+# Disqus settings
+disqus_username: francissoungblog
+
+# Duoshuo settings
+# duoshuo_username: www-francissoung
+# Share component is depend on Comment so we can NOT use share only.
+duoshuo_share: false                    # set to false if you want to use Comment without Sharing
+duoshuo_comment: false
+
+# baidu Share settings
+baidu_share: true
+
+
+
+# Analytics settings
+# Baidu Analytics
+ba_track_id: 551c451674b914ab3e454205afd429a8
+# Google Analytics
+# ga_track_id: 'UA-49627206-1'            # Format: UA-xxxxxx-xx
+# ga_domain: www.francissoung.com
+
+
+
+# Sidebar settings
+sidebar: true                           # whether or not using Sidebar.
+sidebar-about-description: "爱好旅行，摄影和运动，更热爱我现在的coding。世界那么大，我想去看看。"
+sidebar-avatar: /img/avatar-francis.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+
+
+
+
+# Featured Tags
+featured-tags: true                     # whether or not using Feature-Tags
+featured-condition-size: 1              # A tag will be featured if the size of it is more than this condition value
+
+
+
+# Friends
+friends: [
+    {
+        title: "马力全开",
+        href: "http://blog.maryopen.com/"
+    },{
+        title: "航哥",
+        href: "http://www.april2nd.me/"
+    },{
+        title: "鹏哥",
+        href: "http://blog.ichuck.net/"
+    },{
+        title: "望望",
+        href: "http://www.shmilyx.net/"
+    },{
+        title: "好一网",
+        href: "http://www.51hsw.com/"
+    }
+]

@@ -1,0 +1,67 @@
+---
+layout:     post
+title:      "在Linux系统中为PHP5.3安装Zend Guard Loader"
+subtitle:   ""
+date:       2016-01-16
+author:     "Francis Soung"
+header-img: "img/post-bg-os-metro.jpg"
+tags:
+    - Linux
+    - PHP 
+---
+
+
+从PHP5.3开始如果要支持ZendGuard加密的PHP代码，必须安装Zend Guard Loader，老的zend optimizer将不被支持。
+
+本文介绍如何在Linux系统中为PHP5.3安装Zend Guard Loader支持的过程。
+
+操作系统为CentOS5.5，PHP版本为5.3.8（CentOS5.5中的PHP默认版本较低，如果要升级到PHP最新版，可以使用remi的report源进行升级）。
+
+
+1、[Zend Guard Loader](http://www.zend.com/en/products/guard/downloads "Zend Guard Loader")官方下载地址：
+
+i386版下载地址： http://downloads.zend.com/guard/5.5.0/ZendGuardLoader-php-5.3-linux-glibc23-i386.tar.gz
+x86_64版下载地址：http://downloads.zend.com/guard/5.5.0/ZendGuardLoader-php-5.3-linux-glibc23-x86_64.tar.gz
+
+CentOS i386版的PHP的模块默认位置：/usr/lib/php/modules
+CentOS x86_64版的PHP的模块默认位置：/usr/lib64/php/modules
+
+2、从Zend.com下载最新的Zend Guard Loader到Linux服务器并解压缩，本文以x86_64版为例进行讲解安装过程，注意阅读生成目录下的README文件。
+
+	cd /usr/local/src
+	
+	wget http://downloads.zend.com/guard/5.5.0/ZendGuardLoader-php-5.3-linux-glibc23-x86_64.tar.gz
+	
+	tar zxvf ZendGuardLoader-php-5.3-linux-glibc23-x86_64.tar.gz
+	
+	cd /usr/local/src/ZendGuardLoader-php-5.3-linux-glibc23-x86_64/php-5.3.x
+	
+	cp ZendGuardLoader.so /usr/lib64/php/modules/
+
+3、在/etc/php.d/目录下创建文件zend.ini,内容如下：
+
+	zend_extension=/usr/lib64/php/modules/ZendGuardLoader.so
+或者
+
+	vi /etc/php.ini
+末尾增加：
+
+	[zend.loader]
+	
+	zend_loader.enable=1
+	
+	zend_extension=/usr/lib64/php/modules/ZendGuardLoader.so
+
+4、重启httpd即。。
+
+	service httpd restart
+
+5、然后php -v看看Zend Guard Loader是否安装成功。
+
+    [root@root]# php -v
+    PHP 5.3.8 (cli) (built: Feb 22 2013 02:37:06)
+    Copyright (c) 1997-2010 The PHP Group
+    Zend Engine v2.3.0, Copyright (c) 1998-2010 Zend Technologies
+    with Zend Guard Loader v3.3, Copyright (c) 1998-2010, by Zend Technologies
+
+注意：with Zend Guard Loader v3.3出现表示安装成功，如果没有则安装失败。

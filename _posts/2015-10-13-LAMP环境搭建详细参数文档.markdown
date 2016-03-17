@@ -1,0 +1,366 @@
+---
+layout:     post
+title:      "LAMP环境搭建详细参数文档"
+subtitle:   ""
+date:       2015-10-13
+author:     "Francis Soung"
+header-img: "img/post-bg-lamp.jpg"
+tags:
+    - Linux
+    - LAMP
+    - PHP
+    - MySQL
+    - Apache
+---
+
+> 共享一下学习阶段，老师分享的LAMP环境搭建的文档，非常详细，包括安装所需软件、配置相关参数、可能出现的问题以及解决方法等。请提出意见并指正。
+
+
+准备工作
+----
+
+**1、安装编译工具gcc、gcc-c++、make**
+
+注意解决依赖关系，推荐使用yum安装，若不能联网可使用安装光盘做为yum源——
+1)编辑yum配置文件：
+
+    Mount /dev/cdrom /media
+    vi /etc/yum.repos.d/CentOS-Media.repo 
+    [c5-media] 
+    name=CentOS-$releasever - Media
+    baseurl=file:///media   * 修改为光盘挂载点
+    enabled=1  * 改为1意为启用
+    gpgcheck=0
+    gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
+
+ 2)设置alias值:
+
+    Vi /etc/bashrc
+    alias yum="yum --disablerepo=\* --enablerepo=c5-media"
+
+3)依次安装gcc、gcc-c++
+
+    Yum -y install gcc*
+
+**2、卸载系统Apache、MySQL和PHP的RPM安装包**
+
+*下载前需关闭启动的服务，如httpd、mysqld*
+
+    service httpd stop
+    service mysqld stop
+
+*卸载RPM包的Apache、MySQL、PHP*
+
+    yum remove httpd
+    yum remove mysql
+
+建议使用rpm –e http-1.2.3.rpm --nodeps (截断这个rpm包的依赖性)
+
+**3、关闭SELinux，允许防火墙80端口访问**
+
+1）关闭SELinux
+
+    vi /etc/selinux/config
+    SELINUX=disabled   * 若安装时没有禁用SELinux ，将enforcing改为disabled
+
+修改后需重新启动Linux方可生效！
+
+2）关闭防火墙Netfilter/iptables
+因尚未做防火墙讲解，直接简单的关闭所有防火墙设置：
+
+    iptables -F     * 如果没有禁用防火墙，默认80端口禁止访问
+    service iptables save   防火墙策略写到/etc/sysconfig/iptables,以后计算机重启再加载这个文件时，防火墙策略就会永久清空.
+
+编译安装
+----
+
+ * 每个源码包配置编译安装完成后，确认安装目录下是否生成安装文件
+
+**1、安装libxml2**
+
+     cd /lamp/libxml2-2.6.30
+    ./configure --prefix=/usr/local/libxml2/
+     make 
+     make install
+
+ 
+**2、安装libmcrypt**
+
+ 
+
+    cd /lamp/libmcrypt-2.5.8
+     ./configure --prefix=/usr/local/libmcrypt/
+     make 
+     make install
+     * 需调用gcc-c++编译器，未安装会报错
+
+**3、安装libltdl，也在libmcrypt源码目录中，非新软件**
+
+ 
+
+    cd /lamp/libmcrypt-2.5.8/libltdl
+     ./configure --enable-ltdl-install
+     make
+     make install
+
+**4、安装zlib**
+
+     cd /lamp/zlib-1.2.3
+    ./configure
+     make
+     make install 
+     * zlib指定安装目录可能造成libpng安装失败，故不指定，为卸载方便，建议make install执行结果输出到安装日志文件，便于日后卸载
+
+**5、安装libpng**
+
+ 
+
+    cd /lamp/libpng-1.2.31
+     ./configure --prefix=/usr/local/libpng/
+     make
+     make install
+
+**6、安装jpeg6**
+
+    mkdir /usr/local/jpeg6
+    mkdir /usr/local/jpeg6/bin
+    mkdir /usr/local/jpeg6/lib
+    mkdir /usr/local/jpeg6/include
+    mkdir -p /usr/local/jpeg6/man/man1
+    cd /lamp/jpeg-6b
+    ./configure --prefix=/usr/local/jpeg6/ --enable-shared --enable-static
+    make
+    make install
+    * --enable-shared与--enable-static参数分别为建立共享库和静态库使用的libtool
+
+**7、安装freetype**
+
+     cd /lamp/freetype-2.3.5
+     ./configure --prefix=/usr/local/freetype/
+     make
+     make install
+
+**8、安装autoconf**
+
+     cd /lamp/autoconf-2.61
+     ./configure
+     make 
+     make install
+
+ 
+**9、安装GD库**
+
+    mkdir /usr/local/gd2
+    cd /lamp/gd-2.0.35
+
+*png错误，修改方法:*
+
+    vi gd_png.c
+    把#include “png.h”替换
+    #include "/usr/local/libpng/include/png.h"
+
+
+    ./configure --prefix=/usr/local/gd2/ --with-jpeg=/usr/local/jpeg6/ --with-freetype=/usr/local/freetype/
+     --with-png=/usr/local/libpng/
+     Make
+    #如果出现错误，把上面的两步重新执行一次.
+     make install
+     * 若前面配置zlib时没有指定安装目录，gd配置时不要添加--with-zlib=/usr/local/zlib/参数
+
+**10、安装Apache**
+
+     cd /lamp/httpd-2.2.9
+     ./configure --prefix=/usr/local/apache2/ --sysconfdir=/usr/local/apache2/etc/ --with-included-apr --enable-so --enable-deflate=shared --enable-expires=shared --enable-rewrite=shared
+     make
+     make install
+    *若前面配置zlib时没有指定安装目录，Apache配置时不要添加--with-z=/usr/local/zlib/参数*
+
+ *启动Apache测试：*
+
+    /usr/local/apache2/bin/apachectl start
+    ps -le | grep httpd
+
+若启动时提示/usr/local/apache2/modules/mod_deflate.so无权限，可关闭SELinux或者执行命令chcon -t texrel_shlib_t /usr/local/apache2/modules/mod_deflate.so ，类似此类.so文件不能载入或没有权限的问题，都是SELinux问题，使用命令：“chcon -t texrel_shlib_t 文件名”即可解决，MySQL和Apache也可能有类似问题。
+
+通过浏览器输入地址访问：http://Apache服务器地址，若显示“It works”即表明Apache正常工作
+
+设置Apache系统引导时启动：
+
+    echo "/usr/local/apache2/bin/apachectl start" >> /etc/rc.d/rc.local
+
+**11、安装nurses**
+
+    （1）yum –y install ncurses*
+    （2）源代码编译:
+    cd /lamp/ncurses-5.6
+    ./configure --with-shared --without-debug --without-ada --enable-overwrite
+    make 
+    make install
+    * 若不安装ncurses编译MySQL时会报错
+    * --without-ada参数为设定不编译为ada绑定，因进入chroot环境不能使用ada ；--enable-overwrite参数为定义把头文件安装到/tools/include下而不是/tools/include/ncurses目录
+
+**12、安装MySQL**
+
+    useradd mysql
+    *添加用户组mysql ，将mysql用户默认组设置为mysql用户组*
+    cd /lamp/mysql-5.0.41
+    ./configure --prefix=/usr/local/mysql --without-debug --enable-thread-safe-client --with-pthread --enable-assembler --enable-profiling --with-mysqld-ldflags=-all-static --with-client-ldflags=-all-static --with-extra-charsets=all --with-plugins=all --with-mysqld-user=mysql --without-embedded-server --with-server-suffix=-community --with-unix-socket-path=/tmp/mysql.sock
+     make
+     make install
+    *--with-extra-charsets=all参数为安装所有字符集*
+
+#如果不行的话,make clean 后再make ;make install,这样去试一下,默认是不支持innodb存储引擎的.其中--with-plugins=all可以把innodb加载进来.
+
+    cp /usr/local/mysql/share/mysql/my-medium.cnf   /etc/my.cnf
+
+修改mysql配置文件
+
+    （1）[client]
+    default-character-set=utf8
+    （2）[ mysqld]
+    character-set-server = utf8
+    collation-server = utf8_general_ci
+    #default-storage-engine=innodb
+    （3）打开innodb配置
+    #innodb_data_home_dir = /usr/local/mysql/var
+    #innodb_data_file_path = ibdata1:10M:autoextend
+    #innodb_log_group_home_dir = /usr/local/mysql/var
+    #innodb_buffer_pool_size = 16M
+    #innodb_additional_mem_pool_size = 2M
+    #innodb_log_file_size = 5M
+    #innodb_log_buffer_size = 8M
+    #innodb_flush_log_at_trx_commit = 1
+    #innodb_lock_wait_timeout = 50
+     * 生成MySQL配置文件
+     
+     Setfacl –m u:mysql:rwx –R /usr/local/mysql
+     Setfacl –m d:u:mysql:rwx –R /usr/local/mysql
+     * 用acl来让mysql用户对/usr/local/mysql有所有权限
+    * 在FreeBSD下以上不成功的话用
+     修改 /usr/local/mysql 目录属主及其属组为mysql 
+      chown -R mysql:mysql /usr/local/mysql
+    /usr/local/mysql/bin/mysql_install_db --user=mysql
+     * 创建数据库授权表
+
+**启动MySQL服务**
+
+    （1）用原本源代码的方式去使用和启动mysql
+    /usr/local/mysql/bin/mysqld_safe --user=mysql &
+    （2）重启以后还要生效:
+    Vi /etc/rc.local
+    /usr/local/mysql/bin/mysqld_safe --user=mysql &
+    
+    /usr/local/mysql/bin/mysqladmin -uroot password kkk  
+    #给mysql用户root加密码.密码为kkk
+    
+     /usr/local/mysql/bin/mysql -u root -pkkk test 
+    mysql>show databases;
+    mysql>use test
+    mysql>show tables;
+    #进入mysql以后用set来改密码.
+     mysql> exit
+     * 登录MySQL客户端控制台设置指定root密码
+
+ 
+**13、安装PHP**
+
+ 编译前确保系统已经安装了libtool和libtool-ltdl软件包，若没有安装使用yum或rpm安装下：
+
+    yum install libtool*
+    yum install libtool-ltdl*
+    
+     cd /lamp/php-5.2.6
+    ./configure --prefix=/usr/local/php/ --with-config-file-path=/usr/local/php/etc/ --with-apxs2=/usr/local/apache2/bin/apxs --with-mysql=/usr/local/mysql/ --with-libxml-dir=/usr/local/libxml2/ --with-jpeg-dir=/usr/local/jpeg6/ --with-png-dir=/usr/local/libpng/ --with-freetype-dir=/usr/local/freetype/ --with-gd=/usr/local/gd2/ --with-mcrypt=/usr/local/libmcrypt/ --with-mysqli=/usr/local/mysql/bin/mysql_config --enable-soap --enable-mbstring=all --enable-sockets
+    * 若前面配置zlib时没有指定安装目录，PHP配置时不要添加--with-zlib-dir=/usr/local/zlib/参数
+    make
+    make install
+
+生成php.ini(php的配置文件)
+
+    cp /lamp/php-5.2.6/php.ini-dist /usr/local/php/etc/php.ini
+
+测试apache与php的连通性,看apache是否能解析php文件
+
+    vi /usr/local/apache2/etc//httpd.conf
+     AddType application/x-httpd-php .php .phtml .phps 	(注意T的大小写)
+
+*.phtml为将.phps做为PHP源文件进行语法高亮显示*
+
+    重启Apache服务：/usr/local/apache2/bin/apachectl restart
+
+#php生效, /usr/local/apache2/bin/apachectl stop/start
+
+Apache无法启动，提示cannot restore segment prot after reloc: Permission denied错误，为SELinux问题，可关闭SELinux或者执行命令chcon -t 
+texrel_shlib_t /usr/local/apache2/modules/libphp5.so   
+
+测试：vi /usr/local/apache2/htdocs/test.php    
+
+    <?
+        phpinfo();
+    ?>
+
+通过浏览器输入地址访问：http://Apache服务器地址/test.php 
+
+*有时第一次浏览器测试会失败，关闭浏览器重启再尝试即可，非编译错误*
+
+**14、编译安装memcache**
+
+    tar zxvf memcache-2.2.5.tgz
+    cd memcache-2.2.5
+    /usr/local/php/bin/phpize
+    ./configure --with-php-config=/usr/local/php/bin/php-config
+    make && make install
+
+**15、编译安装 PDO_MYSQL**
+
+    tar zxvf /lamp/PDO_MYSQL-1.0.2.tgz
+    cd /lamp/PDO_MYSQL-1.0.2/
+    /usr/local/php/bin/phpize
+    ./configure --with-php-config=/usr/local/php/bin/php-config --with-pdo-mysql=/usr/local/mysql
+    make && make install
+    
+    修改php.ini
+    extension_dir = "/usr/local/php//lib/php/extensions/no-debug-non-zts-20060613/"
+    extension="memcache.so";
+    extension="pdo.so";
+    extension="pdo_mysql.so";
+    * 生成PHP配置文件
+
+ 
+**16、安装Zend加速器**
+
+    cd /lamp/ZendOptimizer-3.2.6-linux-glibc21-i386
+    ./install.sh
+    * 注意PHP配置文件和Apache启动脚本所在目录指定正确即可
+
+**17、安装memcache源代码**
+
+http://memcached.googlecode.com/files/memcached-1.4.10.tar.gz
+首先安装依赖包libevent
+
+    Yum –y install libevent
+
+*主包已经安装,别忘记安装libevent-devel*,不然./configure过不去*
+
+    Tar xzf /lamp/memcached-1.4.10.tar.gz
+    Cd /lamp/memcached-1.4.10
+    ./configure --prefix=/usr/local/memcache
+    Make && make install
+    Useradd memcache
+    Passwd memcache
+
+*因为系统不能用root运行memcache软件*
+
+    /usr/local/memcache/bin/memcache –umemcache &     #后台运行
+    Netstat –tunpl|grep :11211
+    telnet 192.168.10.1 11211
+    stats
+
+写入自启动：
+
+    Vi /etc/rc.local
+    /usr/local/memcache/bin/memcache –umemcache &
+
+*如何杀掉后台进程，用kill %1,查看进程用jobs*
+
+*#要注意memcache,因为它有两个源代码包，一个是php驱动库包(memcache-2.2.5.tgz),另一个是memcache主程序源代码包(memcached-1.4.10.tar.gz);*

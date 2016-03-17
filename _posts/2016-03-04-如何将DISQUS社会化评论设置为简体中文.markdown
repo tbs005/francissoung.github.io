@@ -1,0 +1,50 @@
+---
+layout:     post
+title:      "如何将DISQUS社会化评论设置为简体中文"
+subtitle:   ""
+date:       2016-03-04
+author:     "Francis Soung"
+header-img: "img/post-bg-disqus.jpg"
+tags:
+    - Francis 杂谈
+---
+
+1、首先要打开Disqus的网站，点击右上角的 Sign-in 登录。
+
+![](http://7xl0td.com1.z0.glb.clouddn.com/2016%2F03%2F04%2Fpost-bg-disqus.jpg)
+
+2、进入后台。
+
+登录后回到首页，点击右上角你的头像，选择 Admin，进入管理后台。
+
+3、选择右上角“Settings”：
+
+![](http://7xl0td.com1.z0.glb.clouddn.com/2016%2F03%2F04%2F9999.jpg)
+
+先给大家看看这些设置都是什么意思：
+
+	APPEARANCE：评论区的样式
+	COMMENT COUNT LINK： 当评论、回应条数分别为 0、1 时的显示
+	DEFAULT SORT：默认的回复排序方式
+	LANGUAGE：评论区的语言
+	GUEST COMMENTING：是否允许匿名留言
+
+可将评论数为0、1、多条时的提示语改为中文：
+
+![](http://7xl0td.com1.z0.glb.clouddn.com/2016%2F03%2F04%2F2014-04-04_120755.png)
+
+4、设置语言为简体中文：
+
+你会发现language没有简体中文，只有chinese(taiwai)。如何选成简体中文？
+
+a、打开浏览器的开发者工具，快捷键一般为F12
+
+b、使用元素选取工具定位到语言的选择列表。
+
+c、将代码部分的zh_TW改为zh。
+
+![](http://7xl0td.com1.z0.glb.clouddn.com/2016%2F03%2F04%2F2014-04-04_121348.jpg)
+
+d、选择保存，你会发现，语言选择多出了一项chinese，选择语言为chinese，你的disqus就是简体中文版本了。
+
+![](http://7xl0td.com1.z0.glb.clouddn.com/2016%2F03%2F04%2F8888.jpg)

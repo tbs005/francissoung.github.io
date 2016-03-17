@@ -1,0 +1,189 @@
+---
+layout: page
+title: "About"
+description: "Hey, this is Francis."
+header-img: "img/about-bg.jpg"
+---
+
+<!-- Language Selector -->
+<select onchange= "onLanChange(this.options[this.options.selectedIndex].value)">
+    <option value="0" selected> 中文 Chinese </option>
+    <option value="1"> 英文 English </option>
+</select>
+
+<!-- Chinese Version -->
+<div class="zh post-container">
+
+    <!--copied from markdown -->
+    <blockquote><p>爱好旅行，摄影和运动，更热爱我现在的coding。<br>
+    世界那么大，我想去看看。</p></blockquote>
+
+    <p>Hey，我是<strong>Francis Soung</strong>，程序员 &amp; PHP开发工程师，<a href="http://www.pku.edu.cn/" target="_blank">北京大学</a> · 计算机科学与技术专业在修；前 · <a href="http://www.biigroup.com" target="_blank">天地互连</a>开发组技术负责人；
+    目前任职于<a href="http://phtv.ifeng.com/" target="_blank">凤凰卫视</a> · <a href="http://art.ifeng.com" target="_blank">凤凰艺术</a>，担任PHP开发主管，负责PHP后台开发以及技术架构。</p>
+
+    <p>一些作品和开源项目，👉 戳 <a href="/portfolio">Portfolio</a> 与 <a href="http://github.com/FrancisSoung" target="_blank">Github</a></p>
+
+    <p>个人旅行相册：<a href="http://gallery.francissoung.com" target="_blank">弗朗西斯的简单生活</a></p>
+
+    <h5>Book</h5>
+    <ul>
+        <li><a href="https://www.gitbook.com/book/francissoung/understanding_the_php_kernel/details">深入理解PHP内核</a></li>
+        <p>如有打开不了的情况，请访问以下PDF版本，也可以保存到本地&nbsp;<a href="/attach/Understanding_the_PHP_kernel.pdf">点击阅读</a></p>
+    </ul>
+
+    <h5>Talks</h5>
+    <ul>
+        <li><a href="http://www.francissoung.com/2015/11/11/%E7%A8%8B%E5%BA%8F%E5%91%98%E5%88%B0%E5%BA%95%E6%98%AF%E4%B8%80%E4%B8%AA%E4%BB%80%E4%B9%88%E8%81%8C%E4%B8%9A/">程序员到底是一个什么职业？</a></li>
+    </ul>
+    <ul>
+        <li><a href="http://www.francissoung.com/2016/03/03/%E6%B5%85%E8%B0%88%E5%A4%A7%E5%9E%8B%E7%BD%91%E7%AB%99%E5%8A%A8%E6%80%81%E5%BA%94%E7%94%A8%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/">浅谈大型网站动态应用系统架构</a></li>
+    </ul>
+
+    <ul>
+        <li><a href="http://www.francissoung.com/2016/03/04/%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E4%BC%98%E7%BE%8E%E7%9A%84-C-%E4%BB%A3%E7%A0%81/">如何写出优美的C代码</a></li>
+    </ul>
+
+    <h5>微信公众号</h5>
+    <p><img src="/img/qrcode_for_francissoung.jpg" alt="PHP程序猿的笔记"></p>
+
+    <!--<h5>Resumes</h5>-->
+
+    <!--<ul>-->
+    <!--<li><a href="/attach/2016_Hux_en_SE.pdf">2016_Hux_en_SE &amp; FE</a></li>-->
+    <!--<li><a href="attach/2016_Hux_en_PD.pdf">2016_Hux_en_PD &amp; UX</a></li>-->
+    <!--</ul>-->
+
+</div>
+
+<!-- English Version -->
+<div class="en post-container">
+    <blockquote><p>Yet another Web Developer / PHP Engineer.</p></blockquote>
+
+    <p>My name is <strong>Francis Soung</strong>，you can call me nickname <strong>Francis</strong>. I studied Digital Media Art in <a href="http://www.pku.edu.cn/" target="_blank">Peking University</a>, Computer Science and Technology.</p>
+
+    <p>As a engineer, I work at Art@ifeng (<a href="http://art.ifeng.com" target="_blank">Art Ifeng</a>) ,responsible for the development of background technique, and <a href="http://www.biigroup.com/" target="_blank">BII Group</a> three years of work.</p>
+
+    <p>As a engineer,I am ever offered as php engineer Intern by Bii, PhoenixTV etc, at the background of technology development.</p>
+
+    <p>Some of my projects is put on my <a href="/portfolio">Portfolio 👉</a> and <a href="http://github.com/FrancisSoung" target="_blank">Github 👉</a></p>
+
+    <!--<h5>Talks</h5>-->
+
+    <!--<ul>-->
+    <!--<li><a href="http://huangxuan.me/2015/12/28/css-sucks-2015/">CSS Still Sucks 2015 · 2015</a></li>-->
+    <!--<li><a href="http://huangxuan.me/2015/07/09/js-module-7day/">JavaScript Modularization Journey · 2015</a></li>-->
+    <!--</ul>-->
+
+
+    <!--<h5>Resumes</h5>-->
+
+    <!--<ul>-->
+    <!--<li><a href="/attach/2016_Hux_en_SE.pdf">2016_Hux_en_SE &amp; FE</a></li>-->
+    <!--<li><a href="attach/2016_Hux_en_PD.pdf">2016_Hux_en_PD &amp; UX</a></li>-->
+    <!--</ul>-->
+
+    <h5>WeChat</h5>
+    <p><img src="/img/qrcode_for_francissoung.jpg" alt="PHP程序猿的笔记"></p>
+</div>
+
+<!-- Handle Language Change -->
+<script type="text/javascript">
+    // get nodes
+    var $zh = document.querySelector(".zh");
+    var $en = document.querySelector(".en");
+    var $select = document.querySelector("select");
+
+    // bind hashchange event
+    window.addEventListener('hashchange', _render);
+
+    // handle render
+    function _render(){
+        var _hash = window.location.hash;
+        // en
+        if(_hash == "#en"){
+            $select.selectedIndex = 1;
+            $en.style.display = "block";
+            $zh.style.display = "none";
+        // zh by default
+        }else{
+            // not trigger onChange, otherwise cause a loop call.
+            $select.selectedIndex = 0;
+            $zh.style.display = "block";
+            $en.style.display = "none";
+        }
+    }
+
+    // handle select change
+    function onLanChange(index){
+        if(index == 0){
+            window.location.hash = "#zh"
+        }else{
+            window.location.hash = "#en"
+        }
+    }
+
+    // init
+    _render();
+</script>
+
+
+
+{% if site.duoshuo_username %}
+<!-- 多说评论框 start -->
+<div class="comment">
+    <div class="ds-thread"
+    {% if site.duoshuo_username == "huxblog" %}
+        data-thread-id="1187623191091085319"
+    {% else %}
+        data-thread-key="{{site.duoshuo_username}}/about"
+    {% endif %}
+
+    data-title="{{page.title}}"
+    data-url="{{site.url}}/about/"></div>
+</div>
+<!-- 多说评论框 end -->
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    // dynamic User hacking by Hux
+    var _user = '{{site.duoshuo_username}}';
+
+    // duoshuo comment query.
+    var duoshuoQuery = {short_name: _user };
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+{% endif %}
+
+
+{% if site.disqus_username %}
+<!-- disqus 评论框 start -->
+<div class="comment">
+    <div id="disqus_thread" class="disqus-thread">
+
+    </div>
+</div>
+<!-- disqus 评论框 end -->
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "{{site.disqus_username}}";
+    var disqus_identifier = "{{site.disqus_username}}/{{page.url}}";
+    var disqus_url = "{{site.url}}{{page.url}}";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+{% endif %}

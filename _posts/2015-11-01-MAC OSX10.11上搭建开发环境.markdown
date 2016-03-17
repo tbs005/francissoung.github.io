@@ -1,0 +1,155 @@
+---
+layout:     post
+title:      "MAC OSX10.11上搭建Apache，PHP，MySQL5.6.15，phpMyAdmin开发环境"
+subtitle:   ""
+date:       2015-11-01
+author:     "Francis Soung"
+header-img: "img/post-bg-rwd.jpg"
+tags:
+    - OS X
+    - PHP
+    - Apache
+    - MySQL
+---
+
+最近在本地测试网站，之前经常远程到公司进行测试，受网络限制比较严重，并且效率非常低，今天就豁出去了，在我用了两年的小白上安装了开发环境。
+
+其实OSX上自带了apache和php，所以这两个搞起来还比较顺利。装MySQL的最新版5.6.15版颇费周折，本文详细记录之。
+
+
+<!--more-->
+
+
+#### apache的配置
+
+apache已经自带了，只需如下三个命令就可以了。
+
+	开启apache服务 sudo apachectl start
+	停止apache服务 sudo apachectl stop
+	重启服务 sudo apachectl restart
+	查看版本 httpd -v
+
+![20151101-1@2x.png][1]
+
+手动打开apache服务后，在浏览器输入localhost，将看到如下：
+
+![20151101-1@2x.png][2]
+
+程序的根目录在`/Library/WebServer/Documents/ `下，这个It works 就是里面的info.php打印出来的。下面介绍如何将apache的这个默认目录更改到用户目录下。
+
+1、在自己的用户目录下新建一个Sites文件夹，我的用户目录为Francis
+
+2、进到cd /etc/apache2/users/目录下，sudo vim francis.conf，内容为：
+
+	<Directory "/Users/Francis/Sites/">
+	AllowOverride All
+	Options Indexes MultiViews FollowSymLinks
+	Require all granted
+	</Directory>
+
+上面第一行里的Francis就是用户目录。然后将该文件权限改为644：
+
+	sudo chmod 644 francis.conf
+
+3、进到`/etc/apache2/`目录，`sudo vim httpd.conf` 将下面三句话的注释去掉：
+
+	LoadModule authz_core_module libexec/apache2/mod_authz_core.so
+	LoadModule authz_host_module libexec/apache2/mod_authz_host.so
+	LoadModule userdir_module libexec/apache2/mod_userdir.so
+
+前两句应该已经不带注释了，把第三句注释放开。
+
+然后找到`Include /private/etc/apache2/extra/httpd-userdir.conf `注释放开。
+
+> PS：在vim下只要切换到命令模式，然后输入/”words you need find”就能快速找到需要查找的词。
+
+4、进到/etc/apache2/extra/目录，
+
+	sudo vim httpd-userdir.conf
+
+将`Include /private/etc/apache2/users/*.conf `这句话放开注释。
+
+然后终端输入：`sudo apachectl restart` 重启apache，浏览器输入： loacal/~francis/ 就能看到效果了。（francis是我的用户目录的名字,后面不用再加/Sites）
+经过以上步骤apache就搞好了。
+
+#### PHP配置
+
+PHP的配置非常简单，就一个事，进到/etc/apache2/目录，编辑httpd.conf，找到`LoadModule php5_module libexec/apache2/libphp5.so`将其放开注释就行了。
+
+然后`sudo apachectl restart` 重启，在用户目录的Sites文件夹下，新建一个index.php,里面`echo phpinfo()` ，就可以看到效果了：
+
+![20151102-0@2x.png][3]
+
+#### 安装MySQL5.6.15
+
+在官网下载即可，版本可根据实际个人需求选择，下面是安装方法：
+
+1、双击安装的时候，不要勾选StartUp Item这一项：
+![QQ20151102-0@2x.png][4]
+
+如此安装完毕后，在设置－－－MySQL手动开启MySQL服务。
+![QQ20151102-1@2x.png][5]
+
+我这里已经打开了MySQL服务。下面要将其设置为开机自动启动。
+
+2、默认状态下，我们用mysql的命令每次都要输入全路径，如`sudo /usr/local/mysql/support-files/mysql.server start` 开启mysql服务，`/usr/local/mysql/bin/mysql -v`查看mysql版本，得先把bin目录配到环境变量里。切换到用户根目录 ，`vim .bash_profile`,输入：
+
+	export PATH=”/usr/local/mysql/bin:$PATH”
+
+保存后，`source .bash_profile`使环境变量生效。接着就可以直接在终端里输入mysql命令了。
+
+最后，通过`mysqladmin -u root password ‘yourpasswordhere’ `给mysql的root用户设置密码。单引号里的内容就是要设的密码。
+
+> 备注：有时上面这个命令不能修改root密码，需要借助phpmyadmin来修改。其实mysql这个版本默认的root密码为root。
+
+3、修复socket error的问题。有一个负责mysql 服务器 客户端通讯的socket文件，mysql的这个版本将其放在/tmp目录，但是OSX却默认的找 /var/mysql 这个目录，所以要建个软链接。新建目录 /var/mysql， 然后`sudo ln -s /tmp/mysql.sock /var/mysql/mysql.sock` 就ok了。
+
+4、让mysql开机自动启动。
+
+`sudo vim /Library/LaunchDaemons/com.mysql.mysql.plist`,里面内容输入：
+
+	KeepAlive
+
+	Label
+	com.mysql.mysqld
+	ProgramArguments
+
+	/usr/local/mysql/bin/mysqld_safe
+	–user=mysql
+
+保存后，修改权限：
+
+	sudo chown root:wheel /Library/LaunchDaemons/com.mysql.mysql.plist
+	sudo chmod 644 /Library/LaunchDaemons/com.mysql.mysql.plist
+	sudo launchctl load -w /Library/LaunchDaemons/com.mysql.mysql.plist
+
+这样mysql就ok了！
+
+#### phpMyAdmin的安装
+
+从http://www.phpmyadmin.net/官网下载，版本自由选择，下载完成后，将其解压。然后最外层文件夹名字修改为phpmyadmin，进到`~/Sites/phpmyadmin`这个目录，新建文件夹：mkdir config 修改读写权限：chmod o+w config
+
+然后浏览器输入：http://localhost/~Francis/phpmyadmin/setup/ (注意 中间的yanzi 换成自己的用户名称)
+
+点击 ”新建服务器“，我上面已经新建好了，然后在这个界面：
+
+密码处输入mysql的root用户密码。然后点击”应用”，记得在如下界面点击保存按钮这样config文件夹下就生成了config.inc.php，将该文件拷贝到phpmyadmin的根目录下。
+
+然后删除整个config文件夹。输入http://localhost/~Francis/phpmyadmin/ 就可以看到登陆phpmyadmin的界面了。 如此，phpMyAdmin搞定。
+
+##### 读写权限和分组问题
+
+最后遗留一个读写权限和归属问题，如果本地开发测试的话，这个步骤可以忽略。如果想让自己的mac切实作为一台服务器，那么这个还要设置下的。这个步骤等同于在布阿里云代码的时候，让public_html文件夹的所有东西可写，且归属于www一个意思。假设Sites文件夹下有个自己的项目：testsite
+
+`sudo chmod -R a+w ~/Sites/testsite` 设置所有人都可以读写
+
+`sudo chown -R _www ~/Sites/testsite` 设置testsite文件夹只归属_www组。
+
+OK，PHP在MAC上的搭建到此结束。
+
+
+  [1]: http://7xl0td.com1.z0.glb.clouddn.com/2015/11/01/3007933119.png
+  [2]: http://7xl0td.com1.z0.glb.clouddn.com/2015/11/01/3412207876.png
+  [3]: http://7xl0td.com1.z0.glb.clouddn.com/2015/11/02/3346607926.png
+  [4]: http://7xl0td.com1.z0.glb.clouddn.com/2015/11/02/555088672.png
+  [5]: http://7xl0td.com1.z0.glb.clouddn.com/2015/11/02/1072163062.png
